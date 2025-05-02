@@ -22,50 +22,70 @@ st.write("----------------------------------------------------------------------
 
 st.sidebar.title("Navigation")                  # Main Navigation on the left
 st.sidebar.title("Select Data for Analysis")
-data_selection = st.sidebar.radio("Choose the Data Set to Visualise", [
-    "Home", "Top 100 Names (England & Wales)", "Top 100 Names by Country", "Top 10 Names by Region", 
+data_selection = st.sidebar.radio("Choose the Data to Visualise", [
+    "Dashboard", "Top Names (England & Wales)", "Top Names by Country", "Top 10 Names by Region", 
     "Top 10 Names by Month", "Overall Top Names", "Top Names by Area", "Top 100 by Mother's Age"
 ])
-if data_selection == "Home":                            # Necessary coding because there are 8 Pages
+if data_selection == "Dashboard":                            # Necessary coding because there are 8 Pages. Use IF for it
     st.markdown("Below, you can see both a **Line Chart** and a **Bar Chart** representing the popularity of these names: " \
     "The **Line Chart** shows the trend of counts across names. " \
-    "The **Bar Chart** provides a clearer comparison of the counts for each name.")
+    "The **Bar Chart** provides a clearer comparison of the counts for each name. " \
+    "The **Scatter Chart** shows relationships of Baby Names between England & Wales.")
     st.snow()           #Just an interactive feature you can change it to balloons
     with st.spinner("Please wait..."):
         time.sleep(5)
-        st.subheader('Top 5 Baby Names')
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))  # 1 row, 2 columns, Also, two axis because two charts are going to be next to each other
-        names = ['Olivia', 'Amelia', 'Isla', 'Ava', 'Sophia']
-        counts = [2906, 2663, 2337, 2290, 2086]
-        ax1.plot(names, counts, marker='o')
-        ax1.set_xlabel('Name')
-        ax1.set_ylabel('Count')
-        ax2.bar(names, counts)
-        ax2.set_xlabel('Name')
-        ax2.set_ylabel('Count')
+        st.subheader("Top 10 Names (England & Wales)")
+        summary_df = df.head(10)
+        fig, ax = plt.subplots(figsize=(20, 10)) #The main start of the graphs 
+        ax.bar(summary_df['Name'], summary_df['Count'])
+        ax.set_title('Top 10 Baby Names (England & Wales, 2023)')
+        ax.set_xlabel('Name')
+        ax.set_ylabel('Count')
+        plt.xticks(rotation=75, fontsize = 14)  #Rotate x-axis number used in rotation for better readability
         st.pyplot(fig)
         st.write("-------------------------------------------------------------------------------")
-        st.subheader("Bottom 5 Baby names")
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))  # 1 row, 2 columns
-        names = ['Autumn', 'Nellie', 'Jasmine', 'Navaeh', 'Raya']
-        counts = [510, 509, 501, 494, 486]
-        ax1.plot(names, counts, marker='o')
-        ax1.set_xlabel('Name')
-        ax1.set_ylabel('Count')
-        ax2.bar(names, counts)
-        ax2.set_xlabel('Name')
-        ax2.set_ylabel('Count')
+        st.subheader("Bottom 10 Baby names (England & Wales)")
+        fig, ax, = plt.subplots(figsize=(12, 6))  
+        bar_names = ['Hazel', 'Darcie', 'Lara', 'Hannah', 'Lilah', 'Autumn', 'Nellie', 'Jasmine', 'Navaeh', 'Raya']
+        bar_counts = [527, 525, 525, 515, 513, 510, 509, 501, 494, 486]
+        ax.bar(bar_names, bar_counts)
+        ax.set_title("Bottom 10 Baby Names (England & Wales)")
+        ax.set_xlabel('Name')
+        ax.set_ylabel('Count')
         st.pyplot(fig)
+        st.write("-------------------------------------------------------------------------------")
+        st.subheader("Name Rank in England vs Wales")
+        summary_line_df = df2.head(10)
+        fig, ax = plt.subplots(figsize=(20, 10))
+        ax.plot(summary_line_df['Name'], summary_line_df['Rank in England'], label= "England", marker ='o', color= 'blue')
+        ax.plot(summary_line_df['Name'], summary_line_df['Rank in Wales'], label= "Wales",  marker ='o', color= 'orange')
+        ax.set_title('Rank Comparison (Lower is Better)')
+        ax.set_xlabel('Name', fontsize = 16)
+        ax.set_ylabel('Rank (Lower is Better)', fontsize= 16)
+        ax.invert_yaxis()
+        ax.legend()
+        plt.xticks(rotation=75, fontsize = 14)
+        st.pyplot(fig)
+        st.write("-------------------------------------------------------------------------------")
+        summary_scatter_df = df2.head(100)
+        chart = alt.Chart(summary_scatter_df).mark_circle().encode(
+            x="Rank in England",
+            y="Rank in Wales",
+            tooltip=["Name","Rank in England","Rank in Wales"]
+        ).properties(                                   # This is just to add a title for the graph
+            title=f"England vs Wales Rank Comparison"
+        )
+        st.altair_chart(chart, use_container_width=True)
         st.write("-------------------------------------------------------------------------------")
 
-elif data_selection == "Top 100 Names (England & Wales)": #England and Wales combines (Together)
+elif data_selection == "Top Names (England & Wales)": #England and Wales combines (Together)
     st.title("Baby Names - England & Wales")
-    st.subheader("Top 100 Baby Names (England & Wales, 2023)")
-    top_n = st.selectbox("Select number of top name to display in the bar chart:", options = [10,20,50,100]) #Giving the user a selection
+    st.subheader("Top Baby Names (England & Wales, 2023)")
+    top_n = st.selectbox("Select number of top name to display in the bar chart:", options = [10,25,50,75,100]) #Giving the user a selection
     filtered_df = df.head(top_n)
     fig, ax = plt.subplots(figsize=(20, 10)) #The main start of the graphs 
     ax.bar(filtered_df['Name'], filtered_df['Count'])
-    ax.set_title('Top 100 Baby Names (England & Wales, 2023)')
+    ax.set_title(f'Top {top_n} Baby Names (England & Wales, 2023)')
     ax.set_xlabel('Name')
     ax.set_ylabel('Count')
     plt.xticks(rotation=75, fontsize = 10)  #Rotate x-axis number used in rotation for better readability
@@ -76,7 +96,7 @@ elif data_selection == "Top 100 Names (England & Wales)": #England and Wales com
     st.info(f"The top {top_n} names have a total count of {filtered_df['Count'].sum():,} baby girls.")
     st.write("-------------------------------------------------------------------------------")
     # Line chart
-    top_n_line = st.selectbox("Select number of top name to display in the Line chart:", options = [10,20,50,100], key = "line_chart_top_n") #to not clash with the bar chart
+    top_n_line = st.selectbox("Select number of top name to display in the Line chart:", options = [10,25,50,75,100], key = "line_chart_top_n") #to not clash with the bar chart
     filtered_line_df = df.head(top_n_line)
     fig2, ax2 = plt.subplots(figsize=(20, 10))
     ax2.plot(filtered_line_df['Name'], filtered_line_df['Count'], marker ='o')
@@ -99,24 +119,24 @@ elif data_selection == "Top 100 Names (England & Wales)": #England and Wales com
     df
     st.write("As we can see from the table above, it represents the top 100 baby girl names registered in England and Wales, along with the number of times each name was used. It also tracks how each name's popularity has shifted compared to both the previous year (2022) and the past decade (since 2013). This allows us to spot any long-term trends, rising stars, and names that may be fading in popularity. For example, cultural influence, social media trends, and changing societal preferences.")
 
-# Page 2: Top 100 Names by Country (England vs Wales)
-elif data_selection == "Top 100 Names by Country":
+# Page 2: Top Names by Country (England vs Wales)
+elif data_selection == "Top Names by Country":
     st.title("Baby Names - England & Wales")
     country = st.radio("Select your choice of Country", ["England", "Wales"])
     if country == "England": #MAKE SURE ITS DF2 FOR ENGLAND (they are different datasheets)
         st.subheader("Baby Names (England, 2023)")
-        top_n = st.selectbox("Select number of top name to display in the bar chart:", options = [10,20,50,100])
+        top_n = st.selectbox("Select number of top name to display in the bar chart:", options = [10,25,50,75,100])
         filtered_df2 = df2.head(top_n)                          # The formula for graphs and charts are pretty much the same except the small changes like variables names
         fig, ax = plt.subplots(figsize=(20, 10))
         ax.bar(filtered_df2['Name'], filtered_df2['Count'])
-        ax.set_title('Top 100 Baby Names (England & Wales, 2023)')
+        ax.set_title(f'Top {top_n} Baby Names (England & Wales, 2023)')
         ax.set_xlabel('Name')
         ax.set_ylabel('Count')
         plt.xticks(rotation=75, fontsize = 12)
         st.pyplot(fig)
         st.info(f"The top {top_n} names have a total count of {filtered_df2['Count'].sum():,} baby girls.")
         #Line chart for England
-        top_n_line = st.selectbox("Select number of top name to display in the Line chart:", options = [10,20,50,100], key = "line_chart_top_n") #to not clash with the bar chart        
+        top_n_line = st.selectbox("Select number of top name to display in the Line chart:", options = [10,25,50,75,100], key = "line_chart_top_n") #to not clash with the bar chart        
         filtered_line_df2 = df2.head(top_n_line)
         fig, ax = plt.subplots(figsize=(20, 10))
         ax.plot(filtered_line_df2['Name'], filtered_line_df2['Rank in England'], label= "England", marker ='o', color= 'blue')
@@ -136,7 +156,7 @@ elif data_selection == "Top 100 Names by Country":
             x="Rank in England",
             y="Rank in Wales",
             tooltip=["Name","Rank in England","Rank in Wales"]
-        ).properties(
+        ).properties(                                   # This is just to add a title for the graph
             title=f"England vs Wales Rank Comparison"
         )
         st.altair_chart(chart, use_container_width=True)
@@ -144,17 +164,17 @@ elif data_selection == "Top 100 Names by Country":
         st.write("-------------------------------------------------------------------------------")
     else: #MAKE SURE IT'S DF3 FOR WALES
         st.subheader("Baby Names (Wales, 2023)")
-        top_n = st.selectbox("Select number of top name to display in the bar chart:", options = [10,20,50,100])
+        top_n = st.selectbox("Select number of top name to display in the bar chart:", options = [10,25, 50, 75, 100])
         filtered_df3 = df3.head(top_n)
         fig, ax = plt.subplots(figsize=(20, 10))
         ax.bar(filtered_df3['Name'], filtered_df3['Count'])
-        ax.set_title('Top 100 Baby Names (England & Wales, 2023)')
+        ax.set_title(f'Top {top_n} Baby Names (England & Wales, 2023)')
         ax.set_xlabel('Name')
         ax.set_ylabel('Count')
         plt.xticks(rotation=75, fontsize = 12)
         st.pyplot(fig)
         st.info(f"The top {top_n} names have a total count of {filtered_df3['Count'].sum():,} baby girls.")
-        top_n_line = st.selectbox("Select number of top name to display in the Line chart:", options = [10,20,50,100], key = "line_chart_top_n") #to not clash with the bar chart        
+        top_n_line = st.selectbox("Select number of top name to display in the Line chart:", options = [10, 25, 50, 75, 100], key = "line_chart_top_n") #to not clash with the bar chart        
         filtered_line_df3 = df3.head(top_n_line)
         fig, ax = plt.subplots(figsize=(20, 10))
         ax.plot(filtered_line_df3['Name'], filtered_line_df3['Rank in Wales'], label= "Wales", marker ='o', color= 'orange')
@@ -223,7 +243,6 @@ elif data_selection == "Top 10 Names by Region":            # Now seperating it 
     df4_map = pd.DataFrame(data_map) 
     st.map(df4_map[['lat', 'lon']])
 
-
 # Page 4: Top 10 Names by Month
 elif data_selection == "Top 10 Names by Month":                 #Same procedure from Regions
     st.subheader("Top 10 Names by Month of Birth (England & Wales, 2023)")
@@ -249,7 +268,8 @@ elif data_selection == "Top 10 Names by Month":                 #Same procedure 
     ax.axis('equal')
     ax.set_title("Distribution of Top Baby Names By Region (England & Wales)", fontsize = 16)
     st.pyplot(fig)
-    st.write("The Pie chart visualises the distribution of the total number of baby name registratiions for a selected month.")
+    st.write("The Pie chart visualises the distribution of the total number of baby name registrations for a selected month.")
+    st.write("This pie chart shows the top baby names and their percentage. For example, the use **Isabella** on January is 8.5 percent and **Olivia** is 13.3 percent. This means that during January the name **Olivia** is user more than **Isabella**. ")
     st.write("-------------------------------------------------------------------------------")
     top10line_df5 = df5[df5['Name'] != 'All names']
     fig, ax = plt.subplots(figsize=(20, 10)) # For loop to show the name trend between the months
@@ -311,15 +331,28 @@ elif data_selection == "Top Names by Area":
     st.write("-------------------------------------------------------------------------------")
 
 # Page 7: Top 100 by Mother's Age
-# Fix this page the age is not name, it is rank
+# This page, the age is not name, it is rank
 elif data_selection == "Top 100 by Mother's Age":
-    st.subheader("Top 100 Names by Mother's Age Group (England & Wales, 2023)")
-    age_group = st.selectbox("Select Mother's Age Group", df8['AgeGroup'].unique())
-    age_group_df = df8[df8['AgeGroup'] == age_group]
-    fig, ax = plt.subplots(figsize=(20, 10))
-    ax.bar(age_group_df['Name'], age_group_df['Count'])
-    ax.set_title(f"Top 100 Names for Mother's Age Group: {age_group}")
+    st.subheader("Top Names by Mother's Age Group (England & Wales, 2023)")
+    age_groups = {                      #Grouping the columns in a specific format and it will be used later on for allowing the user to select an option
+    "Aged under 25": ["Aged under 25 Name", "Aged under 25 Rank"],
+    "Aged 25 to 29": ["Aged 25 to 29 Name", "Aged 25 to 29 Rank"],
+    "Aged 30 to 34": ["Aged 30 to 34 Name", "Aged 30 to 34 Rank"],
+    "Age 35 and over": ["Age 35 and over Name", "Age 35 and over Rank"]
+    }
+    age_group = st.radio("Select an Age Group: ", list(age_groups.keys()))
+    top_n_df8 = st.selectbox("Select the number of top names:", [10, 25, 50, 75, 100])
+    name_df8, rank_df8 = age_groups[age_group]                  # To pick up the matching columns for the selected age group
+    top_names = df8[[name_df8, rank_df8]].sort_values(by=rank_df8).head(top_n_df8)      # Now filtering the top names for the selected age group for the user.
+    fig, ax = plt.subplots(figsize=(20, 10))                            # Now plotting the graph
+    ax.bar(top_names[name_df8], top_names[rank_df8])
+    ax.set_title(f"Top {top_n_df8} Names in Age Group: {age_group}")
     ax.set_xlabel('Name')
-    ax.set_ylabel('Count')
+    ax.set_ylabel('Rank (Lower is Better)')
     plt.xticks(rotation=75)
     st.pyplot(fig)
+    st.write("The Bar chart displays the ranking of names within the selected age group, showing how popular each name is based on its rank across different age ranges. ")
+    st.write("-------------------------------------------------------------------------------")
+    st.markdown("The table below shows ranked baby names across all Mother's Age Groups, it offers a clear view of how naming trends vary across generations. This can be useful to explore different trends and patterns.")
+    df8
+    st.write("-------------------------------------------------------------------------------")
