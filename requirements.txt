@@ -3,3 +3,4 @@ pandas
 matplotlib==3.6.0
 numpy
 altair
+openpyxl==3.1.2
