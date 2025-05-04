@@ -24,7 +24,7 @@ st.sidebar.title("Navigation")                  # Main Navigation on the left
 st.sidebar.title("Select Data for Analysis")
 data_selection = st.sidebar.radio("Choose the Data to Visualise", [
     "Dashboard", "Top Names (England & Wales)", "Top Names by Country", "Top 10 Names by Region", 
-    "Top 10 Names by Month", "Overall Top Names", "Top Names by Area", "Top 100 by Mother's Age"
+    "Top 10 Names by Month", "Overall Top Names", "Top Names by Area", "Top Names by Mother's Age"
 ])
 if data_selection == "Dashboard":                            # Necessary coding because there are 8 Pages. Use IF for it
     st.markdown("Below, you can see both a **Line Chart** and a **Bar Chart** representing the popularity of these names: " \
@@ -332,7 +332,7 @@ elif data_selection == "Top Names by Area":
 
 # Page 7: Top 100 by Mother's Age
 # This page, the age is not name, it is rank
-elif data_selection == "Top 100 by Mother's Age":
+elif data_selection == "Top Names by Mother's Age":
     st.subheader("Top Names by Mother's Age Group (England & Wales, 2023)")
     age_groups = {                      #Grouping the columns in a specific format and it will be used later on for allowing the user to select an option
     "Aged under 25": ["Aged under 25 Name", "Aged under 25 Rank"],
