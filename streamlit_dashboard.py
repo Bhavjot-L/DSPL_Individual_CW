@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import altair as alt
 
-df = pd.read_excel("Data Files/GirlsNamesDataset.xlsx")
+df = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx")
 
-df1 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_1") #keep notes of the df's 
-df2 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_2") # Reading each file SHEET seperately
-df3 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_3")
-df4 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_4")
-df5 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_5")
-df6 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_6")
-df7 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_7")
-df8 = pd.read_excel("Data Files/GirlsNamesDataset.xlsx", sheet_name= "Table_8")
+df1 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_1") #keep notes of the df's 
+df2 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_2") # Reading each file SHEET seperately
+df3 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_3")
+df4 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_4")
+df5 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_5")
+df6 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_6")
+df7 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_7")
+df8 = pd.read_excel("Data_Files/GirlsNamesDataset.xlsx", sheet_name= "Table_8")
 st.title("Baby Names Dashboard")                                        # The top Home page for all
 st.markdown("*This interactive dashboard provied insights into the most popular baby names for girls in England and Wales. " \
             "You can explore trends overtime, compare regions, and use filters to interact with it. Use the visual charts and tables to understand how name preferences change across different age groups and months througout the year.*")
